@@ -204,17 +204,4 @@ def format_timeout_seconds(seconds: int) -> str:
 
 
 def build_sample_scripts() -> list[ScriptDefinition]:
-    project_root = Path(__file__).resolve().parents[2]
-    sample_script = project_root / "examples" / "sample_echo.ps1"
-
-    return [
-        ScriptDefinition.create(
-            name="PowerShell Echo",
-            executable_path="powershell.exe",
-            arguments=f'-ExecutionPolicy Bypass -File "{sample_script}" -Message "Hello from scheduler"',
-        ),
-        ScriptDefinition.create(
-            name="Notepad Demo",
-            executable_path="notepad.exe",
-        ),
-    ]
+    return []
