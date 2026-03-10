@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Logs
+logs/
+*.log
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Local configurations and user data
+data/config.json
+configs/config.json
+configs/prompt.txt
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Project planning
+计划/
