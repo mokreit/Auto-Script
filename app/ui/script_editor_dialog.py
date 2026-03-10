@@ -129,7 +129,7 @@ class ScriptEditorDialog(QDialog):
             ("脚本名称", self.name_edit, "用于显示脚本名称。"),
             ("程序路径", self._build_path_row(), "要启动的程序或脚本路径。"),
             ("启动参数", self.arguments_edit, "启动程序时附带的参数，可留空。"),
-            ("运行超时", self.run_timeout_spin, "脚本运行超时时间，0 表示不限制。"),
+            ("日志超时", self.run_timeout_spin, "脚本无日志输出超时时间，0 表示不限制。"),
             (
                 "监测游戏关闭进程",
                 self.monitor_process_name_edit,

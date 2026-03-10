@@ -270,7 +270,7 @@ class ScriptRunner(QObject):
             self._emit_system_output("完成判定: 未配置对应进程名，将按启动进程退出判定。")
         if self._script_timeout_seconds > 0:
             self._emit_system_output(
-                "已启用运行超时检测: "
+                "已启用超时检测(日志无更新时触发): "
                 f"{format_timeout_seconds(int(self._script_timeout_seconds))}。"
             )
         if self._close_script_on_finish:
@@ -334,9 +334,9 @@ class ScriptRunner(QObject):
             if self._current_context is not None:
                 self._current_context.timed_out = True
                 self._emit_system_output(
-                    "运行超时，正在关闭当前脚本..."
+                    "日志无更新超时，正在关闭当前脚本..."
                     if self._close_script_on_finish
-                    else "运行超时，正在结束当前脚本...",
+                    else "日志无更新超时，正在结束当前脚本...",
                 )
 
             # 超时后不再等待监控进程结果，但保留进程名以便执行结束动作。
@@ -416,7 +416,7 @@ class ScriptRunner(QObject):
             current_context.message = "已停止"
         elif current_context.timed_out:
             current_context.status = TaskStatus.FAILED
-            current_context.message = "运行超时"
+            current_context.message = "日志超时"
             self._had_failures = True
         elif completion_completed:
             current_context.status = TaskStatus.SUCCESS
@@ -487,12 +487,17 @@ class ScriptRunner(QObject):
             self._clear_output_queue()
             return
 
+        has_output = False
         while True:
             try:
                 stream, text = self._output_queue.get_nowait()
             except Empty:
                 break
             self.script_output.emit(self._current_context, stream, text)
+            has_output = True
+
+        if has_output and self._script_timeout_seconds > 0:
+            self._timeout_deadline = monotonic() + self._script_timeout_seconds
 
     def _clear_output_queue(self) -> None:
         while True:
