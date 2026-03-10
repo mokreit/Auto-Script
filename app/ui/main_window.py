@@ -419,10 +419,7 @@ class MainWindow(QMainWindow):
             ),
             (
                 "技术信息",
-                (
-                    "当前版本基于 Python 3.12 与 PySide6 构建，配置文件默认保存在 "
-                    f"{self.config_service.config_path}。"
-                ),
+                "当前版本基于 Python 3.12 与 PySide6 构建。",
             ),
         )
 
