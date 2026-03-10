@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -26,7 +27,13 @@ class AppConfig:
 
 class ConfigService:
     def __init__(self, config_path: Path | None = None) -> None:
-        project_root = Path(__file__).resolve().parents[2]
+        if getattr(sys, "frozen", False):
+            # When running as a PyInstaller bundle, use the executable's directory
+            project_root = Path(sys.executable).parent
+        else:
+            # When running from source, use the project root
+            project_root = Path(__file__).resolve().parents[2]
+
         self.config_path = config_path or project_root / "data" / "config.json"
 
     def load(self) -> tuple[AppConfig, bool]:
