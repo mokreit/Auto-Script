@@ -231,6 +231,13 @@ class ScriptRunner(QObject):
         program = self._resolve_program(script.executable_path)
         arguments = self._parse_arguments(script.arguments)
 
+        cwd: str | None = None
+        if script.executable_path:
+            clean_path = script.executable_path.strip().strip('"').strip("'")
+            candidate_cwd = Path(clean_path).parent
+            if candidate_cwd.is_absolute() and candidate_cwd.exists():
+                cwd = str(candidate_cwd)
+
         try:
             self._process = subprocess.Popen(
                 [program, *arguments],
@@ -238,6 +245,7 @@ class ScriptRunner(QObject):
                 stderr=subprocess.PIPE,
                 text=False,
                 bufsize=0,
+                cwd=cwd,
             )
         except OSError as exc:
             self._handle_start_failure(str(exc))
@@ -247,6 +255,8 @@ class ScriptRunner(QObject):
         self._current_context.status = TaskStatus.RUNNING
         self._current_context.message = "运行中"
         self.script_started.emit(self._current_context)
+        if cwd:
+            self._emit_system_output(f"工作目录: {cwd}")
         if self._script_process_name:
             self._emit_system_output(
                 f"已配置脚本进程名: {self._script_process_name}。"
@@ -633,7 +643,7 @@ class ScriptRunner(QObject):
         self.execution_finished.emit(completed, message)
 
     def _resolve_program(self, executable_path: str) -> str:
-        candidate = executable_path.strip()
+        candidate = executable_path.strip().strip('"').strip("'")
         if not candidate:
             return candidate
 
